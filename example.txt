@@ -1,1 +1,55 @@
-for example
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class go_c : MonoBehaviour
+{
+    // Start is called before the first frame update
+    void Start()
+    {
+        Debug.Log("C가 시작될 때 실행됩니다.");
+        StartCoroutine(Test()); // 코루틴 함수의 호출
+        StartCoroutine(MobRegenTimeController());
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        Debug.Log("이 코드는 매 프레임마다 실행됩니다.");
+    }
+
+    IEnumerator Test() // 코루틴 함수는 앞에 IEnumerator를 붙인다.
+    {
+        WaitForSeconds waitSec = new WaitForSeconds(3.0f);
+        WaitForSeconds waitSec2 = new WaitForSeconds(6.0f);
+        // 이런 식으로 활용해 줘야 메모리를 계속 점유하지 않는다.
+
+        // 코루틴 함수는 반드시 안에 yield 구문이 있어야 한다.
+        // yield 구문은 해당 함수의 실행 순서를 양보한다.
+        // yield return null; // 이 구문은 1프레임을 쉬었다가 실행된다.
+        Debug.Log("이 코드도 3초 있다 실행될까??");
+        yield return waitSec;
+        // 이 구문은 1초 있다 실행됩니다.
+        // yield 구문의 return 뒤에는 해당 코드가 실행되는 시점을 지정해 줄 수 있다.
+        Debug.Log("이 코드는 즉시 실행되지 않습니다.");
+        yield return waitSec2;
+        Debug.Log("이 코드는 6초 후에 실행될 것입니다.");
+    }
+
+    void MobRegen()
+    {
+        Debug.Log("몬스터를 재생성합니다.");
+    }
+
+    IEnumerator MobRegenTimeController()
+    {
+        int a = 0;
+        while(true)
+        {
+            a++;
+            MobRegen();
+            Debug.Log(a);
+            yield return new WaitForSeconds(1.0f);
+        }
+    }
+}
