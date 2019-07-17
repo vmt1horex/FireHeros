@@ -2,31 +2,45 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public GameObject fr;
-
     //캐릭터 정보
     public Text ap;
-    public Text hp;
+    public int playAP;
+
+    GameObject canv;
+
+    Timer TM;
 
     FireGenerator FG;
+
     private void Awake()
     {
-        //this.FG = GameObject.Find("FireGenerator").GetComponent<FireGenerator>();
-    }
-
-    private void Start()
-    {
-        //FG.fires[0] = Instantiate(fr, new Vector3(-0.7f, 0.6f, 0f), transform.rotation);
-        //FG.fires[1] = Instantiate(fr, new Vector3(1.4f, 1.3f, 0f), transform.rotation);
-        //FG.fires[2] = Instantiate(fr, new Vector3(-0.7f, -0.8f, 0f), transform.rotation);
-        //FG.fires[3] = Instantiate(fr, new Vector3(-2.1f, 1.3f, 0f), transform.rotation);
+        playAP = 7;
+        TM = GameObject.Find("Timer").GetComponent<Timer>();
+        FG = GameObject.Find("FireGenerator").GetComponent<FireGenerator>();
+        canv = GameObject.Find("Canvas");
     }
 
     private void Update()
     {
+        //10초 마다 AP 회복
+        if((int)TM.timer <= 0)
+        {
+            playAP = 7;
+        }
+        //AP 표시
+        ap.text = string.Format("{0:f0}", "남은 AP : " + playAP);
 
+        if(FG.fires.Length == 0)
+        {
+            SceneManager.LoadScene("StageClear");
+        }
+        else if(FG.fires.Length >= 60)
+        {
+            SceneManager.LoadScene("GameOver");
+        }
     }
 }

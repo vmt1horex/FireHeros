@@ -60,7 +60,7 @@ public class Inflame : MonoBehaviour
                 nlocation.y += 0.7f;
 
 
-                if (fd.hit == false && nlocation.y <= 3.5f)
+                if (fd.hit == false && nlocation.y <= 4.0f)
                 {
                     Instantiate(fr, nlocation, transform.rotation);
                 }
@@ -72,7 +72,7 @@ public class Inflame : MonoBehaviour
                 nlocation = transform.position;
                 nlocation.y -= 0.7f;
 
-                if (fd.hit == false && nlocation.y >= -2.4f)
+                if (fd.hit == false && nlocation.y >= -1.4f)
                 {
                     Instantiate(fr, nlocation, transform.rotation);
                 }

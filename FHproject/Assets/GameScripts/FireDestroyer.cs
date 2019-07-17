@@ -8,12 +8,10 @@ public class FireDestroyer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetMouseButtonDown(0))
-        {
-            destoryFire();
-        }
+        
     }
 
+    /*
     public void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "fire")
@@ -42,5 +40,7 @@ public class FireDestroyer : MonoBehaviour
             checkTouch = hit.transform.gameObject;
         }
         return checkTouch;
+
     }
+    */
 }

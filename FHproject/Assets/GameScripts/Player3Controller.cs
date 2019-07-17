@@ -11,14 +11,14 @@ public class Player3Controller : MonoBehaviour
 
     GameObject player; //player 오브젝트
     GameObject touchFire;
+    GameManager GM;
 
     Vector3 moving = new Vector3(0, 0, 0);
-
-    int playerAP = 10;
 
     void Start()
     {
         player = this.gameObject;
+        GM = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
     float timer = 15.0f;
@@ -26,16 +26,13 @@ public class Player3Controller : MonoBehaviour
     //AP회복, 타이머
     void Update()
     {
-        ap.text = string.Format("{0:f0}", "남은 AP : " + playerAP);
 
         timer -= Time.deltaTime;
         if (timer < 0.0f)
         {
             timer = 15.0f;
-            playerAP = 10;
         }
-        //AP 표시
-        ap.text = string.Format("{0:f0}", "남은 AP : " + playerAP);
+
     }
 
 
@@ -48,9 +45,13 @@ public class Player3Controller : MonoBehaviour
             RaycastHit2D hit = Physics2D.GetRayIntersection(ray, Mathf.Infinity);
             touchFire = hit.transform.gameObject;
 
-            if (collision.gameObject.transform.position == touchFire.gameObject.transform.position)
+
+
+            if (collision.gameObject.transform.position == touchFire.gameObject.transform.position && GM.playAP > 4)
             {
                 Destroy(collision.gameObject);
+                GM.playAP = GM.playAP - 3;
+                gameObject.transform.position = new Vector3(0, -2.2f, 0);
             }
         }
     }

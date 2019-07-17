@@ -15,21 +15,24 @@ public class Player1Controller : MonoBehaviour
     public GameObject P_UpCollis;
     public GameObject P_DownCollis;
 
-    public Text ap;
     public Text hp;
+    public Text res;
+   // public Text safe;
 
     GameObject player; //player 오브젝트
+    GameManager GM;
 
     Vector3 moving = new Vector3(0, 0, 0);
 
-    int playerAP = 4;
     int playerHP = 3; 
     int rescueMax = 1; //구조 할 수 있는 최대 인원
+    //int safeman;
     
 
     void Start()
     {
         player = this.gameObject;
+        GM = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
     float P1_timer = 7.5f;
@@ -38,38 +41,44 @@ public class Player1Controller : MonoBehaviour
     void Update()
     {
         P1_timer -= Time.deltaTime;
-        ap.text = string.Format("{0:f0}", "남은 AP : " + playerAP);
-        hp.text = string.Format("{0:f0}", "HP : " + playerHP);
+
+        hp.text = string.Format("{0:f0}", " X " + playerHP);
+        if(rescueMax == 0)
+        {
+            res.text = string.Format("{0:f0}", "      : " + (rescueMax + 1) + "명");
+        }
+        else if(rescueMax == 1)
+        {
+            res.text = string.Format("{0:f0}", "      : " + (rescueMax - 1) + "명");
+        }
+
+
         if (playerHP == 0)
         {
             Destroy(gameObject);
-            ap.text = "사망";
-            hp.text = "";
-        }
-        else if (P1_timer < 0.0f)
-        {
-            {
-                P1_timer = 7.5f;
-                playerAP = 4;
-            }
-            //타이머 표시
-            ap.text = string.Format("{0:f0}", "남은 AP : " + playerAP);
 
-            //HP표시
-            hp.text = string.Format("{0:f0}", "HP : " + playerHP);
+            hp.text = " 사망";
         }
 
     }
-
-
     
     public void OnTriggerStay2D(Collider2D collision)
     {
+        Debug.Log(collision.gameObject.tag);
         //불에 닿으면 HP - 1 and 캐릭터와 겹쳐진 불은 삭제
         if (collision.gameObject.tag == "fire")
         {
-            --playerHP;
+            
+            playerHP--;
+            player.transform.position = collision.transform.position;
+
             Destroy(collision.gameObject);
+            if(rescueMax == 0)
+            {
+                rescueMax = 1;
+                Debug.Log("구조자 다이");
+            }
+            
         }
     }
 
@@ -77,7 +86,7 @@ public class Player1Controller : MonoBehaviour
     public void moveUp()
     {
         CD = P_UpCollis.GetComponent<CharatorDetector>();
-       
+        
         //좌표값 오류로 초기화 시켜줘야함
         moving = player.transform.position;
 
@@ -85,7 +94,7 @@ public class Player1Controller : MonoBehaviour
         // AP(행동력)이 있을 때만 행동(불끄기, 이동)이 가능함
 
         // AP 체크
-        if (playerAP == 0)
+        if (GM.playAP == 0)
         {
             print("AP없음");
         }
@@ -97,13 +106,14 @@ public class Player1Controller : MonoBehaviour
             {
                 player.transform.position = moving; //이동하지 않음
                 Destroy(CD.cdr.gameObject); // 닿아 있는 불 제거
-                playerAP--;
+                GM.playAP--;
+                
             }
             //닿아 있지 않다면 이동. AP -1
             else if (moving.y <= 3.4f && (moving.x >= -0.1 && moving.x <= 0.1))
             {
                 player.transform.Translate(0, 0.7f, 0);
-                playerAP--;
+                GM.playAP--;
             }
         }
     }
@@ -112,7 +122,6 @@ public class Player1Controller : MonoBehaviour
     public void moveDown()
     {
         CD = P_DownCollis.GetComponent<CharatorDetector>();
-
         //좌표값 오류로 초기화 시켜줘야함
         moving = player.transform.position;
 
@@ -120,7 +129,7 @@ public class Player1Controller : MonoBehaviour
         // AP(행동력)이 있을 때만 행동(불끄기, 이동)이 가능함
 
         // AP 체크
-        if (playerAP == 0)
+        if (GM.playAP == 0)
         {
             print("AP없음");
         }
@@ -132,19 +141,20 @@ public class Player1Controller : MonoBehaviour
             {
                 player.transform.position = moving;
                 Destroy(CD.cdr.gameObject);
-                playerAP--;
+                GM.playAP--;
             }
             //최대 움직일 수 있는 범위 설정, x좌표 값 오류로 범위 체크해야 함
             else if ((moving.x >= -0.1 && moving.x <= 0.1) && moving.y > -1.6f)
             {
                 player.transform.Translate(0, -0.7f, 0);
-                playerAP--;
+                GM.playAP--;
 
                 //구조자를 업은 상태이고 출구로 나오면 구조 성공
                 if(player.transform.position.y == -2.2f && rescueMax == 0)
                 {
                     rescueMax = 1;
-                    Debug.Log("환자 구함");
+                    //safeman++;
+                    //safe.text = string.Format("{0:f0}", "구조자 : " + safeman + "명");
                 }
             }
         }
@@ -160,7 +170,7 @@ public class Player1Controller : MonoBehaviour
         // AP(행동력)이 있을 때만 행동(불끄기, 이동)이 가능함
 
         // AP 체크
-        if (playerAP == 0)
+        if (GM.playAP == 0)
         {
             print("AP없음");
         }
@@ -182,7 +192,7 @@ public class Player1Controller : MonoBehaviour
                 }
                 //캐릭터와 닿아 있는 불 삭제
                 Destroy(CD.cdr.gameObject);
-                playerAP--;
+                GM.playAP--;
             }
 
             //구조자를 업는다
@@ -190,7 +200,7 @@ public class Player1Controller : MonoBehaviour
             {
                 player.transform.position = moving;
                 Destroy(CD.res.gameObject);
-                playerAP--;
+                GM.playAP--;
                 rescueMax--;
             }
             //한번에 구할 수 있는 한계치가 있다
@@ -198,14 +208,14 @@ public class Player1Controller : MonoBehaviour
             {
                 player.transform.position = moving;
                 //최대 한명만 구조할 수 있습니다
-                print("eekap");
+
             }
 
             //불에 닿아 있지 않다면 이동
             else if (moving.y > -2.0f && moving.y < 4.8f && moving.x > -2.1f)
             {
                 player.transform.Translate(-0.7f, 0, 0);
-                playerAP--;
+                GM.playAP--;
             }
         }
         
@@ -223,7 +233,7 @@ public class Player1Controller : MonoBehaviour
         // AP(행동력)이 있을 때만 행동(불끄기, 이동)이 가능함
 
         // AP 체크
-        if (playerAP == 0)
+        if (GM.playAP == 0)
         {
             print("AP없음");
         }
@@ -246,7 +256,7 @@ public class Player1Controller : MonoBehaviour
 
                 // 닿아 있는 불 삭제
                 Destroy(CD.cdr.gameObject);
-                playerAP--;
+                GM.playAP--;
             }
 
             //구조자를 업는다
@@ -254,7 +264,7 @@ public class Player1Controller : MonoBehaviour
             {
                 player.transform.position = moving;
                 Destroy(CD.res.gameObject);
-                playerAP--;
+                GM.playAP--;
                 rescueMax--;
             }
             //구조할 수 있는 한계치가 있다
@@ -269,7 +279,7 @@ public class Player1Controller : MonoBehaviour
             else if (moving.y > -2.0f && moving.y < 4.8f && moving.x <= 2.1f)
             {
                 player.transform.Translate(0.7f, 0, 0);
-                playerAP--;
+                GM.playAP--;
             }
         }
     }

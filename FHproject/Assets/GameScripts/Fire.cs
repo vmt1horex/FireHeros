@@ -21,12 +21,10 @@ public class Fire : MonoBehaviour
 
     public FireDetector fd;
 
-    float meme = 2.0f;
-
     //시간에 따라 불게이지 감소-> 불이 번지는 타이밍을 알려주는 UI
     void Update()
     {
-        hpb.fillAmount += 0.2f * Time.deltaTime;
+        hpb.fillAmount += 0.1f * Time.deltaTime;
         if(hpb.fillAmount == 1f)
         {
             hpb.fillAmount = 0f;

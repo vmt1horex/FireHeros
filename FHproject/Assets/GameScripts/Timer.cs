@@ -17,7 +17,7 @@ public class Timer : MonoBehaviour
     public void Times()
     {
         timer -= Time.deltaTime;
-        time.text = string.Format("{0:f1}", timer -= Time.deltaTime);
+        time.text = string.Format("{0:f1}", timer);
         if (timer <= 0.0f)
         {
             timer = 15.0f;

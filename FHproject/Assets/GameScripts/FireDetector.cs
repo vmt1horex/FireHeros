@@ -33,7 +33,6 @@ public class FireDetector : MonoBehaviour
     {
         if(collision.transform.tag=="fire")
         {
-            Debug.Log(collision.tag);
             isHit = false;
             fr = null;
         }

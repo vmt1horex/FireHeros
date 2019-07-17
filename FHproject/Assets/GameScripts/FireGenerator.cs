@@ -4,31 +4,51 @@ using UnityEngine;
 
 public class FireGenerator : MonoBehaviour
 {
-    public GameObject firePrefab;
+
     public GameObject[] fires; //생성된 불을 보관하는 배열
 
-    float span = 5.0f;
+    float span = 10.0f;
+    float ranTime = 10.0f;
+
+
+    int windDir;
+    private void Awake()
+    {
+        this.fires = GameObject.FindGameObjectsWithTag("fire");
+    }
 
     private void Update()
     {
         span -= Time.deltaTime;
-        if (this.span <= 0)
+        ranTime -= Time.deltaTime;
+
+        if (ranTime <= 0.1f)
+        {
+            windDir = Random.Range(0, 4);
+        }
+
+        if (span <= 0.0f)
         {
             //생성된 불 검색
             this.fires = GameObject.FindGameObjectsWithTag("fire");
 
-            this.span = 5;
-            int windDir = Random.Range(0, 4);
+            this.span = 10.0f;
 
+            createFires();
 
-            if (fires.Length < 70)
-            {
-                for (int i = 0; i < fires.Length; i++)
-                {
-                    fires[i].GetComponent<Fire>().deffusionFire(windDir);
-                }
-            }
             //print(fires.Length); //불오브젝트가 잘 생성되는지 체크
+        }
+        
+    }
+
+    void createFires()
+    {
+        if (fires.Length < 70)
+        {
+            for (int i = 0; i < fires.Length; i++)
+            {
+                fires[i].GetComponent<Fire>().deffusionFire(windDir);
+            }
         }
     }
 }
